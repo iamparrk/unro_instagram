@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>운로 인스타 카드 1주차</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#111; font-family:'Noto Sans KR',sans-serif; padding:32px 20px; }
+
+.nav-day { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:16px; }
+.nav-slide { display:flex; gap:6px; justify-content:center; margin-bottom:28px; }
+
+.day-btn {
+  padding:7px 16px; background:#222; color:#888; border:none;
+  border-radius:20px; cursor:pointer; font-size:13px;
+  font-family:'Noto Sans KR',sans-serif; transition:all .2s;
+}
+.day-btn:hover { background:#b8860b; color:#fff; }
+.day-btn.active { background:#02204b; color:#d4a017; font-weight:700; }
+
+.slide-btn {
+  padding:5px 12px; background:#222; color:#666; border:none;
+  border-radius:12px; cursor:pointer; font-size:12px;
+  font-family:'Noto Sans KR',sans-serif; transition:all .2s;
+}
+.slide-btn:hover { background:#444; color:#fff; }
+.slide-btn.active { background:#d4a017; color:#02204b; font-weight:700; }
+
+.slide-wrap { display:none; justify-content:center; }
+.slide-wrap.active { display:flex; }
+
+/* 카드 1080x1080 */
+.card {
+  width: 800px;
+  height: 800px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ── 스타일A: 다크 훅 (1번 슬라이드) ── */
+.dark {
+  background: #02204b;
+}
+.dark .top-line {
+  position:absolute; top:0; left:0; right:0; height:5px;
+  background: linear-gradient(90deg, #d4a017, #b8860b, #d4a017);
+}
+.dark .inner {
+  padding: 60px 60px 52px;
+  height: 100%; display:flex; flex-direction:column;
+}
+.dark .slide-num {
+  font-size:11px; letter-spacing:0.3em; color:rgba(212,160,23,0.6);
+  margin-bottom:auto;
+}
+.dark .tag {
+  font-size:13px; letter-spacing:0.2em; color:#d4a017;
+  margin-bottom:20px; font-weight:500;
+}
+.dark .title {
+  font-family:'Noto Serif KR',serif;
+  font-size:52px; font-weight:900; color:#fff;
+  line-height:1.25; letter-spacing:-1.5px;
+  margin-bottom:28px;
+}
+.dark .title em { font-style:normal; color:#d4a017; }
+.dark .hook {
+  font-size:18px; color:rgba(255,255,255,0.6);
+  line-height:1.75; border-left:3px solid #d4a017;
+  padding-left:18px;
+}
+.dark .footer {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:40px; padding-top:20px;
+  border-top:1px solid rgba(255,255,255,0.1);
+}
+.dark .logo { display:flex; align-items:center; gap:8px; }
+.dark .logo-box {
+  width:30px; height:30px; background:#d4a017; border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Noto Serif KR',serif; font-size:15px; font-weight:700; color:#02204b;
+}
+.dark .logo-text { font-family:'Noto Serif KR',serif; font-size:15px; font-weight:700; color:#d4a017; }
+.dark .url { font-size:12px; color:rgba(255,255,255,0.25); letter-spacing:0.1em; }
+.dark .bg-char {
+  position:absolute; right:-20px; bottom:-40px;
+  font-family:'Noto Serif KR',serif; font-size:300px; font-weight:900;
+  color:rgba(255,255,255,0.03); line-height:1; user-select:none;
+}
+.dark .page-dot {
+  position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
+  display:flex; gap:6px;
+}
+.dark .dot { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.2); }
+.dark .dot.on { background:#d4a017; width:20px; border-radius:3px; }
+
+/* ── 스타일B: 베이지 본문 (2번 슬라이드) ── */
+.beige {
+  background: #f5f0e8;
+}
+.beige .left-bar {
+  position:absolute; left:0; top:0; bottom:0; width:5px;
+  background: linear-gradient(180deg, #02204b, #d4a017);
+}
+.beige .inner {
+  padding: 56px 56px 52px 68px;
+  height: 100%; display:flex; flex-direction:column;
+}
+.beige .tag {
+  font-size:11px; letter-spacing:0.25em; color:#b8860b;
+  margin-bottom:18px; font-weight:600;
+}
+.beige .title {
+  font-family:'Noto Serif KR',serif;
+  font-size:34px; font-weight:900; color:#02204b;
+  line-height:1.35; margin-bottom:24px; letter-spacing:-0.5px;
+}
+.beige .divider {
+  height:1px; background:linear-gradient(90deg,#b8860b,transparent);
+  margin-bottom:28px;
+}
+.beige .body {
+  font-size:19px; color:#3d2f24; line-height:1.95;
+  font-weight:400; flex:1;
+}
+.beige .body strong { color:#02204b; font-weight:700; }
+.beige .footer {
+  display:flex; justify-content:space-between; align-items:center;
+  padding-top:20px; border-top:1px solid rgba(26,20,16,0.1);
+}
+.beige .logo { display:flex; align-items:center; gap:8px; }
+.beige .logo-box {
+  width:28px; height:28px; background:#02204b; border-radius:5px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700; color:#d4a017;
+}
+.beige .logo-text { font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700; color:#02204b; }
+.beige .url { font-size:11px; color:#b8a898; letter-spacing:0.08em; }
+.beige .page-dot {
+  position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; gap:6px;
+}
+.beige .dot { width:6px; height:6px; border-radius:50%; background:rgba(2,32,75,0.15); }
+.beige .dot.on { background:#02204b; width:20px; border-radius:3px; }
+
+/* ── 스타일C: 흰 포인트 (3번 슬라이드) ── */
+.white-card {
+  background: #fff;
+  border: 1px solid #e8e0d0;
+}
+.white-card .top-accent {
+  position:absolute; top:0; left:0; right:0; height:6px;
+  background: #02204b;
+}
+.white-card .inner {
+  padding: 56px 56px 48px;
+  height: 100%; display:flex; flex-direction:column;
+}
+.white-card .tag {
+  font-size:11px; letter-spacing:0.25em; color:#b8860b;
+  margin-bottom:18px; font-weight:600;
+}
+.white-card .title {
+  font-family:'Noto Serif KR',serif;
+  font-size:30px; font-weight:900; color:#1a1410;
+  line-height:1.35; margin-bottom:28px; letter-spacing:-0.5px;
+}
+.white-card .points { flex:1; display:flex; flex-direction:column; gap:16px; }
+.white-card .point {
+  display:flex; gap:16px; align-items:flex-start;
+  background:#f9f6f0; border-radius:12px; padding:18px 20px;
+  border-left:4px solid #02204b;
+}
+.white-card .point-icon {
+  font-size:26px; flex-shrink:0; line-height:1;
+}
+.white-card .point-title {
+  font-family:'Noto Serif KR',serif; font-size:18px; font-weight:700;
+  color:#02204b; margin-bottom:5px; line-height:1.3;
+}
+.white-card .point-desc {
+  font-size:15px; color:#666; line-height:1.65;
+}
+.white-card .footer {
+  display:flex; justify-content:space-between; align-items:center;
+  padding-top:20px; border-top:1px solid #f0e8d8; margin-top:20px;
+}
+.white-card .logo { display:flex; align-items:center; gap:8px; }
+.white-card .logo-box {
+  width:28px; height:28px; background:#02204b; border-radius:5px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700; color:#d4a017;
+}
+.white-card .logo-text { font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700; color:#02204b; }
+.white-card .url { font-size:11px; color:#b8a898; letter-spacing:0.08em; }
+.white-card .page-dot {
+  position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; gap:6px;
+}
+.white-card .dot { width:6px; height:6px; border-radius:50%; background:rgba(2,32,75,0.12); }
+.white-card .dot.on { background:#02204b; width:20px; border-radius:3px; }
+
+/* ── 스타일D: CTA (마지막 슬라이드) ── */
+.cta-card {
+  background: #02204b;
+}
+.cta-card::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse at 30% 30%, rgba(212,160,23,0.15) 0%, transparent 60%);
+}
+.cta-card .inner {
+  padding: 64px 60px;
+  height: 100%; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center;
+  position:relative; z-index:1;
+}
+.cta-card .ornament {
+  display:flex; align-items:center; gap:16px; margin-bottom:40px; width:100%;
+}
+.cta-card .ornament-line { flex:1; height:1px; background:rgba(212,160,23,0.3); }
+.cta-card .ornament-char {
+  font-family:'Noto Serif KR',serif; font-size:32px; font-weight:900; color:#d4a017;
+}
+.cta-card .main-msg {
+  font-family:'Noto Serif KR',serif;
+  font-size:34px; font-weight:900; color:#fff;
+  line-height:1.45; margin-bottom:20px; letter-spacing:-0.5px;
+}
+.cta-card .main-msg em { font-style:normal; color:#d4a017; }
+.cta-card .sub-msg {
+  font-size:17px; color:rgba(255,255,255,0.6);
+  line-height:1.8; margin-bottom:48px;
+}
+.cta-card .btn {
+  background:#d4a017; color:#02204b; border:none;
+  border-radius:50px; padding:18px 48px;
+  font-family:'Noto Serif KR',serif; font-size:18px; font-weight:900;
+  letter-spacing:0.5px; cursor:default;
+}
+.cta-card .url-text {
+  margin-top:20px; font-size:13px; color:rgba(255,255,255,0.3);
+  letter-spacing:0.1em;
+}
+</style>
+</head>
+<body>
+
+<div class="nav-day" id="nav-day"></div>
+<div class="nav-slide" id="nav-slide"></div>
+<div id="container"></div>
+
+<script>
+const days = [
+  {
+    day: 1,
+    char: "命",
+    slides: [
+      {
+        type: "dark",
+        tag: "DAY 1 · 운로 인사이트",
+        title: "유튜브 무료 운세가\n당신만 안 맞았던\n<em>이유</em>",
+        hook: "일간 하나만 보고 운세를 말하는 건\n지문 하나로 모든 사람을 구분하는 것과 같습니다.",
+        dots: 4, current: 0
+      },
+      {
+        type: "beige",
+        tag: "DAY 1 · 운로 인사이트",
+        title: "왜 내 운세만 안 맞을까?",
+        body: "유튜브나 앱에서 보여주는 운세는 대부분 <strong>일간(日干) 하나</strong>만 기준으로 합니다.\n\n하지만 사주는 년·월·일·시 네 개의 기둥이 서로 <strong>충(衝)하고 합(合)하며</strong> 전혀 다른 결과를 만들어냅니다.\n\n같은 甲 일간이어도 月柱와 時柱에 따라 성격도, 운의 흐름도 완전히 달라져요.",
+        dots: 4, current: 1
+      },
+      {
+        type: "white",
+        tag: "DAY 1 · 운로 인사이트",
+        title: "단식 판단이 틀리는 3가지 이유",
+        points: [
+          { icon: "🎯", title: "일간만 보는 한계", desc: "사주 8글자 중 1글자만으로 전체를 판단하는 건 불가능해요" },
+          { icon: "⚡", title: "합충을 무시한 해석", desc: "글자들의 상호작용을 빼면 전혀 다른 결과가 나옵니다" },
+          { icon: "🌊", title: "대운·세운 미반영", desc: "지금 흐르는 대운이 같은 사주도 전혀 다르게 만들어요" }
+        ],
+        dots: 4, current: 2
+      },
+      {
+        type: "cta",
+        char: "命",
+        msg: "당신의 사주,\n<em>제대로</em> 읽어드립니다",
+        sub: "8글자 전체를 입체적으로 분석하는\n운로의 사주 리딩을 경험해보세요.",
+        btn: "상담 신청하기 →",
+        dots: 4, current: 3
+      }
+    ]
+  },
+  {
+    day: 2,
+    char: "殺",
+    slides: [
+      {
+        type: "dark",
+        tag: "DAY 2 · 2026 경고",
+        title: "사주에 <em>'이 글자'</em>\n있다면\n올해 구설수 1순위",
+        hook: "말 한마디가 관계 전체를 무너뜨리는 시기.\n지금 당신의 사주에 이 글자가 있나요?",
+        dots: 4, current: 0
+      },
+      {
+        type: "beige",
+        tag: "DAY 2 · 2026 경고",
+        title: "상관·편관이 세운에서\n충(衝)을 만날 때",
+        body: "<strong>상관(傷官)</strong>은 기존 질서에 반하는 에너지입니다. 표현력과 비판 능력이 강해지지만, 잘못 쓰면 윗사람과의 충돌, 직장 내 구설이 생겨요.\n\n<strong>편관(偏官)</strong>이 세운과 충하면 외부 압박이 거세지며 감정 조절이 어려워집니다.\n\n2026 병오년은 화(火)가 강한 해. 금(金) 일간이라면 특히 주의가 필요합니다.",
+        dots: 4, current: 1
+      },
+      {
+        type: "white",
+        tag: "DAY 2 · 2026 경고",
+        title: "구설수를 막는 3가지 전략",
+        points: [
+          { icon: "🤐", title: "말보다 글로 소통하기", desc: "감정적 발언 전 반드시 한 번 더 생각하는 습관이 필요해요" },
+          { icon: "📋", title: "중요한 약속은 문서로", desc: "구두 계약·약속은 이 시기에 가장 위험한 행동입니다" },
+          { icon: "🧘", title: "충동적 SNS 자제", desc: "올린 글 하나가 예상치 못한 파장을 만들 수 있어요" }
+        ],
+        dots: 4, current: 2
+      },
+      {
+        type: "cta",
+        char: "殺",
+        msg: "올해 내 구설수 위험\n<em>얼마나 될까요?</em>",
+        sub: "세운과 대운의 흐름을 함께 분석해\n올해 조심해야 할 시기를 정확히 알려드려요.",
+        btn: "운세 상담 신청 →",
+        dots: 4, current: 3
+      }
+    ]
+  },
+  {
+    day: 3,
+    char: "財",
+    slides: [
+      {
+        type: "dark",
+        tag: "DAY 3 · 인간관계",
+        title: "돈 빌려주면\n무조건 떼이는\n<em>사주 궁합</em>",
+        hook: "나쁜 사람이어서가 아닙니다.\n사주 구조가 그렇게 설계되어 있을 뿐이에요.",
+        dots: 4, current: 0
+      },
+      {
+        type: "beige",
+        tag: "DAY 3 · 인간관계",
+        title: "겁재가 강한 사람과의\n금전 거래가 위험한 이유",
+        body: "<strong>겁재(劫財)</strong>는 내 재성(財星)을 직접 빼앗는 에너지입니다.\n\n상대의 일간이 내 재성을 겁재로 보는 구조에서는, 처음엔 좋은 관계로 시작해도 금전이 개입되는 순간 균형이 무너지기 시작해요.\n\n이건 상대가 나쁜 사람이어서가 아닙니다. <strong>사주 에너지의 충돌</strong>이 그 관계에서 재물 손실을 만드는 것이에요.",
+        dots: 4, current: 1
+      },
+      {
+        type: "white",
+        tag: "DAY 3 · 인간관계",
+        title: "금전 거래 전 확인할 3가지",
+        points: [
+          { icon: "💸", title: "상대 일간과 내 재성의 관계", desc: "겁재·편관 구조라면 금전 관계는 신중하게 접근해야 해요" },
+          { icon: "📅", title: "상대의 현재 대운 흐름", desc: "재성이 극을 받는 대운에 있는 사람에게 빌려주면 위험해요" },
+          { icon: "🤝", title: "반드시 문서화", desc: "사주가 어떻든 계약서 없는 금전 거래는 피하세요" }
+        ],
+        dots: 4, current: 2
+      },
+      {
+        type: "cta",
+        char: "財",
+        msg: "내 재물운,\n<em>지금 어디쯤</em> 와 있을까요?",
+        sub: "올해 재물운의 흐름과\n주의해야 할 인간관계까지 분석해드립니다.",
+        btn: "재물운 상담 신청 →",
+        dots: 4, current: 3
+      }
+    ]
+  },
+  {
+    day: 4,
+    char: "運",
+    slides: [
+      {
+        type: "dark",
+        tag: "DAY 4 · 대운 해석",
+        title: "지금 죽을 만큼\n힘들다면?\n<em>대운이 바뀌는 신호</em>",
+        hook: "무너지는 게 아닙니다.\n허물을 벗고 있는 것입니다.",
+        dots: 4, current: 0
+      },
+      {
+        type: "beige",
+        tag: "DAY 4 · 대운 해석",
+        title: "교운기(交運期)가\n이렇게 힘든 이유",
+        body: "대운은 보통 <strong>10년 단위</strong>로 바뀝니다. 바뀌기 1~2년 전부터 기존 에너지가 흔들리며 삶 전반에 변화가 몰아칩니다.\n\n직장이 흔들리고, 관계가 끊어지고, 거주지가 바뀌는 것들이 <strong>동시에</strong> 일어나는 느낌.\n\n이게 바로 교운기의 전형적인 패턴입니다. 무너지는 게 아니에요. <strong>새로운 10년을 위한 탈피</strong>입니다.",
+        dots: 4, current: 1
+      },
+      {
+        type: "white",
+        tag: "DAY 4 · 대운 해석",
+        title: "대운이 바뀔 때 나타나는 신호",
+        points: [
+          { icon: "🌪", title: "모든 게 동시에 흔들린다", desc: "직장·관계·거주지가 함께 변화하는 건 교운기의 전형이에요" },
+          { icon: "👥", title: "오래된 인연이 끊어진다", desc: "이전 대운의 인연이 정리되고 새 인연이 준비됩니다" },
+          { icon: "🌅", title: "막연한 기대감이 생긴다", desc: "힘들면서도 '뭔가 달라질 것 같은' 느낌, 그게 신호예요" }
+        ],
+        dots: 4, current: 2
+      },
+      {
+        type: "cta",
+        char: "運",
+        msg: "내 대운,\n<em>언제 바뀌나요?</em>",
+        sub: "지금 어떤 대운에 있는지\n앞으로 10년의 흐름을 함께 봐드립니다.",
+        btn: "대운 분석 신청 →",
+        dots: 4, current: 3
+      }
+    ]
+  },
+  {
+    day: 5,
+    char: "財",
+    slides: [
+      {
+        type: "dark",
+        tag: "DAY 5 · 재물운 팩트",
+        title: "사주에 재물운이\n있는데\n<em>왜 난 가난할까?</em>",
+        hook: "재성이 강하다고 부자가 되는 게 아닙니다.\n담을 그릇이 있어야 돈이 쌓입니다.",
+        dots: 4, current: 0
+      },
+      {
+        type: "beige",
+        tag: "DAY 5 · 재물운 팩트",
+        title: "'재다신약(財多身弱)'\n이 경우입니다",
+        body: "재성(財星)이 아무리 많아도 <strong>일간(日干)의 힘이 약하면</strong> 그 돈을 감당하지 못합니다.\n\n들어오는 돈보다 나가는 돈이 많고, 벌어도 벌어도 남는 게 없는 느낌.\n\n이건 게으름의 문제가 아니에요. <strong>사주 구조적 문제</strong>입니다. 이걸 알아야 전략을 바꿀 수 있어요.",
+        dots: 4, current: 1
+      },
+      {
+        type: "white",
+        tag: "DAY 5 · 재물운 팩트",
+        title: "재다신약 사주가\n돈을 모으려면",
+        points: [
+          { icon: "💪", title: "일간의 힘을 키워라", desc: "비겁·인성 운에서 체력과 기반을 먼저 강화해야 해요" },
+          { icon: "🎯", title: "돈보다 실력을 먼저", desc: "그릇을 키운 후에 재물이 들어와야 머뭅니다" },
+          { icon: "🏦", title: "강제 저축 시스템", desc: "의지가 아닌 구조로 돈을 가두는 방법이 가장 효과적이에요" }
+        ],
+        dots: 4, current: 2
+      },
+      {
+        type: "cta",
+        char: "財",
+        msg: "내 재물운의 구조,\n<em>정확히 진단받아보세요</em>",
+        sub: "왜 돈이 안 모이는지\n사주 구조로 정확히 분석해드립니다.",
+        btn: "재물운 상담 신청 →",
+        dots: 4, current: 3
+      }
+    ]
+  },
+  {
+    day: 6,
+    char: "桃",
+    slides: [
+      {
+        type: "dark",
+        tag: "DAY 6 · 연애심리",
+        title: "바람기 다분한\n사주의\n<em>결정적 특징</em>",
+        hook: "나쁜 사람이어서가 아니에요.\n사주 에너지가 그렇게 설계된 것입니다.",
+        dots: 4, current: 0
+      },
+      {
+        type: "beige",
+        tag: "DAY 6 · 연애심리",
+        title: "도화살 + 편재 과다\n이 조합이 위험한 이유",
+        body: "<strong>도화살(桃花殺)</strong>은 타고난 매력 에너지입니다. 이성의 시선을 자연스럽게 끌어당기죠.\n\n여기에 <strong>편재(偏財)가 과다</strong>하면 새로운 자극을 끊임없이 원하는 욕구가 생겨요.\n\n한 사람에게 집중하기 어려운 구조. 이걸 이해할 때 비로소 관계에서 <strong>현명한 선택</strong>이 가능해집니다.",
+        dots: 4, current: 1
+      },
+      {
+        type: "white",
+        tag: "DAY 6 · 연애심리",
+        title: "도화 에너지를\n관계에서 잘 쓰는 법",
+        points: [
+          { icon: "💫", title: "매력을 커리어로 전환", desc: "SNS·강의·대중 상대 직업에서 도화는 최고의 자산이에요" },
+          { icon: "❤️", title: "파트너에게 새로운 자극 만들기", desc: "새로움을 외부가 아닌 관계 안에서 찾는 연습이 필요해요" },
+          { icon: "🔍", title: "상대 사주와의 궁합 확인", desc: "내 도화 에너지를 받아줄 수 있는 사주가 따로 있어요" }
+        ],
+        dots: 4, current: 2
+      },
+      {
+        type: "cta",
+        char: "桃",
+        msg: "내 연애운,\n<em>올해 어떻게 흘러갈까요?</em>",
+        sub: "도화·부처궁·연애 대운까지\n입체적으로 분석해드립니다.",
+        btn: "연애운 상담 신청 →",
+        dots: 4, current: 3
+      }
+    ]
+  },
+  {
+    day: 7,
+    char: "虎",
+    slides: [
+      {
+        type: "dark",
+        tag: "DAY 7 · 경고",
+        title: "절대 건드리면\n안 되는\n<em>'백호살'의 실체</em>",
+        hook: "다스리는 자에겐 강인함이,\n무시하는 자에겐 재앙이 됩니다.",
+        dots: 4, current: 0
+      },
+      {
+        type: "beige",
+        tag: "DAY 7 · 경고",
+        title: "백호살(白虎殺)이란\n무엇인가",
+        body: "백호살은 강렬한 에너지가 응축된 살(殺)입니다. 평상시엔 <strong>강한 추진력과 결단력</strong>으로 나타나지만, 자극을 받으면 주변을 압도하는 폭발적인 에너지가 터져 나옵니다.\n\n이 살을 가진 사람을 함부로 건드리면 예상치 못한 <strong>강한 반격</strong>이 돌아옵니다.\n\n반면 이 에너지를 스스로 다스리는 사람은 어떤 상황에서도 흔들리지 않는 강인함을 갖습니다.",
+        dots: 4, current: 1
+      },
+      {
+        type: "white",
+        tag: "DAY 7 · 경고",
+        title: "백호살 에너지를\n다스리는 법",
+        points: [
+          { icon: "🧘", title: "분노의 임계점을 파악하라", desc: "어떤 상황에서 폭발하는지 미리 알면 예방이 가능해요" },
+          { icon: "⚔️", title: "에너지를 목표에 집중시켜라", desc: "방향이 있는 백호살은 어떤 목표도 관철시킵니다" },
+          { icon: "🌙", title: "충분한 수면과 휴식", desc: "피로할 때 백호 에너지가 가장 위험하게 작용해요" }
+        ],
+        dots: 4, current: 2
+      },
+      {
+        type: "cta",
+        char: "虎",
+        msg: "내 사주의\n<em>강점과 약점</em>을 알고 싶다면",
+        sub: "타고난 살(殺)의 에너지를\n어떻게 활용할지 함께 분석해드립니다.",
+        btn: "명반 해석 신청 →",
+        dots: 4, current: 3
+      }
+    ]
+  }
+];
+
+let currentDay = 0;
+let currentSlide = 0;
+
+function dots(total, current, style) {
+  const cls = style === 'dark' || style === 'cta' ? 'white' : 'dark';
+  return Array.from({length:total}, (_,i) =>
+    `<div class="dot${i===current?' on':''}" style="${cls==='white'?'background:'+(i===current?'#d4a017':'rgba(255,255,255,0.2)'):''}"></div>`
+  ).join('');
+}
+
+function renderSlide(s) {
+  if (s.type === 'dark') {
+    return `<div class="card dark">
+      <div class="top-line"></div>
+      <div class="bg-char">${days[currentDay].char}</div>
+      <div class="inner">
+        <div class="slide-num">운로 · UNRO</div>
+        <div>
+          <div class="tag">${s.tag}</div>
+          <div class="title">${s.title.replace(/\n/g,'<br>')}</div>
+          <div class="hook">${s.hook.replace(/\n/g,'<br>')}</div>
+        </div>
+        <div class="footer">
+          <div class="logo">
+            <div class="logo-box">運</div>
+            <div class="logo-text">운로</div>
+          </div>
+          <div class="url">www.unro.co.kr</div>
+        </div>
+      </div>
+      <div class="page-dot">${dots(s.dots, s.current, 'dark')}</div>
+    </div>`;
+  }
+  if (s.type === 'beige') {
+    return `<div class="card beige">
+      <div class="left-bar"></div>
+      <div class="inner">
+        <div class="tag">${s.tag}</div>
+        <div class="title">${s.title.replace(/\n/g,'<br>')}</div>
+        <div class="divider"></div>
+        <div class="body">${s.body.replace(/\n/g,'<br>')}</div>
+        <div class="footer">
+          <div class="logo">
+            <div class="logo-box">運</div>
+            <div class="logo-text">운로</div>
+          </div>
+          <div class="url">www.unro.co.kr</div>
+        </div>
+      </div>
+      <div class="page-dot">${dots(s.dots, s.current, 'beige')}</div>
+    </div>`;
+  }
+  if (s.type === 'white') {
+    const pts = s.points.map(p=>`
+      <div class="point">
+        <div class="point-icon">${p.icon}</div>
+        <div>
+          <div class="point-title">${p.title}</div>
+          <div class="point-desc">${p.desc}</div>
+        </div>
+      </div>`).join('');
+    return `<div class="card white-card">
+      <div class="top-accent"></div>
+      <div class="inner">
+        <div class="tag">${s.tag}</div>
+        <div class="title">${s.title.replace(/\n/g,'<br>')}</div>
+        <div class="points">${pts}</div>
+        <div class="footer">
+          <div class="logo">
+            <div class="logo-box">運</div>
+            <div class="logo-text">운로</div>
+          </div>
+          <div class="url">www.unro.co.kr</div>
+        </div>
+      </div>
+      <div class="page-dot">${dots(s.dots, s.current, 'white')}</div>
+    </div>`;
+  }
+  if (s.type === 'cta') {
+    return `<div class="card cta-card">
+      <div class="inner">
+        <div class="ornament">
+          <div class="ornament-line"></div>
+          <div class="ornament-char">${s.char}</div>
+          <div class="ornament-line"></div>
+        </div>
+        <div class="main-msg">${s.msg.replace(/\n/g,'<br>')}</div>
+        <div class="sub-msg">${s.sub.replace(/\n/g,'<br>')}</div>
+        <div class="btn">${s.btn}</div>
+        <div class="url-text">www.unro.co.kr</div>
+      </div>
+    </div>`;
+  }
+}
+
+function render() {
+  const d = days[currentDay];
+  const s = d.slides[currentSlide];
+
+  // 슬라이드 nav
+  const slideNav = document.getElementById('nav-slide');
+  slideNav.innerHTML = d.slides.map((sl, i) =>
+    `<button class="slide-btn${i===currentSlide?' active':''}" onclick="goSlide(${i})">${i+1}장</button>`
+  ).join('');
+
+  document.getElementById('container').innerHTML =
+    `<div class="slide-wrap active">${renderSlide(s)}</div>`;
+}
+
+function goSlide(i) {
+  currentSlide = i;
+  render();
+}
+
+// Day nav
+const dayNav = document.getElementById('nav-day');
+days.forEach((d, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'day-btn' + (i===0?' active':'');
+  btn.textContent = `Day ${d.day}`;
+  btn.onclick = () => {
+    currentDay = i;
+    currentSlide = 0;
+    document.querySelectorAll('.day-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  };
+  dayNav.appendChild(btn);
+});
+
+render();
+</script>
+</body>
+</html>
