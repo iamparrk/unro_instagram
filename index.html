@@ -564,7 +564,8 @@ function renderSlide(s) {
   if (s.type === 'beige') {
     return `<div class="card beige">
       <div class="left-bar"></div>
-      <div class="inner">
+      <div class="bg-char" style="position:absolute;right:-20px;bottom:-40px;font-family:'Noto Serif KR',serif;font-size:300px;font-weight:900;color:rgba(2,32,75,0.04);line-height:1;user-select:none;z-index:0;">${days[currentDay].char}</div>
+      <div class="inner" style="position:relative;z-index:1;">
         <div class="tag">${s.tag}</div>
         <div class="title">${s.title.replace(/\n/g,'<br>')}</div>
         <div class="divider"></div>
@@ -591,7 +592,8 @@ function renderSlide(s) {
       </div>`).join('');
     return `<div class="card white-card">
       <div class="top-accent"></div>
-      <div class="inner">
+      <div class="bg-char" style="position:absolute;right:-20px;bottom:-40px;font-family:'Noto Serif KR',serif;font-size:300px;font-weight:900;color:rgba(2,32,75,0.04);line-height:1;user-select:none;z-index:0;">${days[currentDay].char}</div>
+      <div class="inner" style="position:relative;z-index:1;">
         <div class="tag">${s.tag}</div>
         <div class="title">${s.title.replace(/\n/g,'<br>')}</div>
         <div class="points">${pts}</div>
@@ -608,6 +610,7 @@ function renderSlide(s) {
   }
   if (s.type === 'cta') {
     return `<div class="card cta-card">
+      <div style="position:absolute;right:-20px;bottom:-40px;font-family:'Noto Serif KR',serif;font-size:300px;font-weight:900;color:rgba(255,255,255,0.03);line-height:1;user-select:none;z-index:0;">${s.char}</div>
       <div class="inner">
         <div class="ornament">
           <div class="ornament-line"></div>
